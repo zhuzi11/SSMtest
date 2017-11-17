@@ -1,0 +1,61 @@
+package com.wisezone.controller.admin;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpUtils;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSONObject;
+import com.wisezone.entity.Dept;
+import com.wisezone.entity.DeptExample;
+import com.wisezone.entity.DeptExample.Criteria;
+import com.wisezone.pojo.BootTablePojo;
+import com.wisezone.service.DeptService;
+ 
+
+@Controller
+@Scope(value="prototype")
+@RequestMapping(value="/admin/dept")
+public class DeptController {
+	
+	
+	@Autowired
+	private DeptService deptService;
+	
+	//显示部门查询页面
+	@RequestMapping(value="/search")
+	public String list( Model model){
+		 
+		return "dept/list";
+	}
+	
+	//admin/dept/list.jsp 中的bootstrap table发送的ajax请求
+	@ResponseBody
+	@RequestMapping(value="/api/data")   //order:asc/desc       sort:排序列
+	public BootTablePojo<Dept> loadAjaxData(String sort, String order,Integer state,DeptExample search ){
+		
+		Criteria criteria=search.createCriteria();  //创建一个查询 对象
+		  //判断状态
+		if(state!=null && state>=0){
+			criteria.andStateEqualTo(state);
+		}
+		
+		//如果排序的列不为空
+		if(StringUtils.isNotBlank(sort)){
+			search.setOrderByClause( sort +" "+ order );
+		}
+		
+		
+		//分页查询 
+	   BootTablePojo<Dept> bt= this.deptService.searchPaging(search);
+		 
+		return bt;
+	}
+
+}

@@ -1,0 +1,331 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core"  prefix="c"%>
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>试题管理</title>
+
+<jsp:include page="../common/bootstrap_css.jsp"></jsp:include>
+
+ 
+
+
+<body>
+	<div class="container-fluid">
+
+		<!-- 导航 -->
+		<div class="row">
+			<ol class="breadcrumb">
+				<li><a href="#">首页</a></li>
+				<li class="active">员工列表</li>
+			</ol>
+		</div>
+
+
+		<!-- 搜索框 -->
+		<div class="row">
+
+			<div class="col-lg-12">
+
+				<div class="panel panel-default">
+
+					<div class="panel-heading">查询条件</div>
+					<div class="panel-body text-right">
+						<form class="form-inline">
+						
+						    <div class="form-group">
+								<label for="staffName">试题分类</label> 
+								<select class="form-control" id="chooseParentId" name="chooseParentId">
+								   <option value="0">所有分类</option>
+								   <!-- 填充数据 -->
+								   <c:forEach items="${allType }" var="one">
+								      <option value="${one.id }">${one.typeName }</option>
+								      
+								      <c:forEach items="${one.childs }" var="two">
+								         <option value="${two.id }">　　${two.typeName }</option> 
+								      </c:forEach>
+								      
+								   </c:forEach>
+								   
+								</select>							 
+							</div>
+							
+							   
+							 <div class="form-group">
+								<label for="staffName">难易程序</label> 
+								<select class="form-control" id="chooseDifficult" name="chooseDifficult">
+								    <option value="0">全部</option>
+								    <option value="1">★</option>
+								    <option value="2">★★</option>
+								    <option value="3">★★★</option>
+								    <option value="4">★★★★</option>
+								    <option value="5">★★★★★</option>
+								</select>							 							 
+							</div>
+							 
+							 
+							<div class="form-group">
+								<label for="staffName">试题类型</label> 
+								<select class="form-control" id="chooseQuestionType" name="chooseQuestionType">
+								    <option value="0">所有类型</option>
+								    <option value="1">单选</option>
+								    <option value="2">多选</option>
+								    <option value="3">判断</option>
+								</select>							 							 
+							</div>
+							 
+
+							<button type="button" class="btn btn-primary" id="btnSearch">搜索</button>
+
+							<button type="button" class="btn btn-success" id="btnAdd">新增</button>
+
+							<button type="button" class="btn btn-info" id="btnEdit">修改</button>
+							 
+						</form>
+
+
+					</div>
+				</div>
+
+
+
+			</div>
+		</div>
+
+		<!-- 表格 -->
+		<div class="row">
+ 
+			<div class="col-lg-12">
+
+				<table id="tb"></table> 
+
+			</div>
+		</div>
+
+
+	</div>
+
+
+
+	<!-- 新增和修改的页面  bootstrap模态框来做的 -->
+	<div id="formModel" class="modal fade" tabindex="-1" role="dialog"
+		aria-labelledby="modalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="modalLabel">修改</h4>
+				</div>
+
+				<!-- 内容 -->
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<form id="form" class="form-horizontal">
+							  <div class="form-group">
+									<label for="staffName" class="col-sm-2 control-label">试题名称</label>
+									<div class="col-sm-10">
+										 <!-- 插件，富文件框 -->
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="loginName" class="col-sm-2 control-label">登录名称</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" id="editLoginName"
+											name="loginName" placeholder="登录名称" >
+									</div>
+								</div>
+							
+								<div class="form-group">
+									<label for="deptName" class="col-sm-2 control-label">所属部门</label>
+									<div class="col-sm-10">
+										<select class="form-control" id="editDeptId" name="deptId">
+										    <!-- 读取数据库中所有的部门信息，填充 -->
+											 <c:forEach items="${ arrDept}" var="p">
+											     <option value="${p.deptId }" >${p.deptName }</option>
+											 </c:forEach>
+										</select>
+										 
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="editState" class="col-sm-2 control-label">状态</label>
+									<div class="col-sm-10">
+
+										<select class="form-control" id="editState" name="state">
+											<option value="1">启用</option>
+											<option value="0">禁用</option>
+										</select>
+									</div>
+								</div>
+                                
+							    
+							</form>
+						</div>
+					</div>
+
+					<!-- modal-body 内容结束 -->
+
+				</div>
+
+				<!-- 底部放按钮 -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" id="btnSave" class="btn btn-primary">保存</button>
+				</div>
+
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+
+
+
+
+
+
+
+
+
+
+	<jsp:include page="../common/bootstrap_js.jsp"></jsp:include>
+	<jsp:include page="../common/bootstrap_tablejs.jsp"></jsp:include>
+	
+	 
+	
+	
+	<script type="text/javascript">
+	    var saveId=0;  //保存的主键
+	    
+	    
+	
+		$(function() {
+               
+			//加载表格
+			initTable();
+			 
+
+			//点击查询(ajax自动刷新)
+			$("#btnSearch").click(function(){
+				$('#tb').bootstrapTable('refresh');
+			});
+		   
+		});
+
+		//初始化表格
+		function initTable() {
+			$('#tb').bootstrapTable(
+							{
+								url : '${pageContext.request.contextPath}/admin/question/api/data.action',
+								pagination : true, //开启分页
+								pageList : [ 5, 10, 15, 20, 30, 50 ],
+								pageSize : 20, //默认大小 
+								paginationPreText : "上一页",
+								paginationNextText : "下一页",
+								sortStable : true, //排序
+								singleSelect : false, //禁止多选
+								clickToSelect : true, //点击选中checkbox/radio
+								checkboxHeader : true,
+								sidePagination : "server",//分页发生在服务器端				   
+								method : "post", //以post提交 
+								contentType : "application/x-www-form-urlencoded", //post提交必须改
+								sortName : "id", //默认以这个排序
+								queryParams : function(params) { //自定义条件				    	 
+                                    params["questionTypeId"]=$("#chooseParentId").val();
+                                    params["difficult"]=$("#chooseDifficult").val();
+                                    params["questionType"]=$("#chooseQuestionType").val();
+									return params;
+								},
+								columns : [ {
+									checkbox : true, //复选框 
+									align : 'center',
+									valign : 'middle'
+
+								}, {
+									field : 'id',
+									title : '编号',
+									sortable : true
+
+								}, {
+									field : 'questionName',
+									title : '试题' 
+									 
+								}, {
+									field : 'parentTypeId',
+									title : '主分类',
+									sortable : true,
+									formatter:parentFormat,
+								},{
+									field : 'childTypeId',
+									title : '子分类',
+									formatter:childFormat,
+									sortable : true
+								}, {
+									field : 'questionType',
+									title : '试题类型',
+									formatter : questionTypeFormat,
+									sortable : true
+								}, {
+									field : 'difficult',
+									title : '难易程序',
+									formatter : difficultFormat,
+									sortable : true
+								}, {
+									field : 'answer',
+									title : '答案' 
+								} ]
+							});
+		}
+    
+		
+		//主分类格式化
+		function parentFormat(value,row){
+			return row.parentQuestiontype.typeName;
+		}
+	 
+		//子分类格式化
+		function childFormat(value,row){
+			return row.childQuestiontype.typeName;
+		}
+		
+		//试题类型格式化
+		function questionTypeFormat(value,row){
+			if(value==1){
+				return "单选";
+			}else if(value==2){
+				return "多选";
+			}else if(value==3){
+				return "判断";
+			}
+			return "其它";
+		}
+		
+		//难易程序格式化
+		function difficultFormat(value,row){
+			
+		   var str="";
+		   for(var i=0;i<value;i++){
+			   str+="★";
+		   } 
+			return str;
+		}
+	</script>
+
+
+
+
+</body>
+</html>

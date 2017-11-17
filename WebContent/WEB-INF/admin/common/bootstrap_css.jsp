@@ -1,0 +1,17 @@
+<%@ page language="java"   pageEncoding="UTF-8"%>
+ 
+
+ <!-- Bootstrap -->
+	<link href="${pageContext.request.contextPath }/resources/bootstrap/css/bootstrap.css" rel="stylesheet">
+	
+	<!-- Latest compiled and minified CSS -->
+     <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/bootstrap-table/bootstrap-table.css">
+  
+     <!-- artDailog   -->
+	<link href="${pageContext.request.contextPath }/resources/artDailog/dialog.css" rel="stylesheet">
+  
+	<!--[if lt IE 9]>
+	      <script src="${pageContext.request.contextPath }/resources/bootstrap/js/html5shiv.min.js"></script>
+	      <script src="${pageContext.request.contextPath }/resources/bootstrap/js/respond.min.js"></script>
+	    <![endif]-->
+	</head>

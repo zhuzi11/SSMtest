@@ -1,0 +1,33 @@
+package com.wisezone.controller.admin;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wisezone.pojo.QuestionTypePojo;
+import com.wisezone.service.QuestiontypeService;
+
+@Controller
+@Scope(value="prototype")
+@RequestMapping(value="/admin/type")
+public class QuestionTypeController {
+
+	@Autowired
+	private QuestiontypeService questinTypeService;
+	
+	
+	@RequestMapping(value="/search")
+	public String search(Model model){
+		
+		List<QuestionTypePojo>  treeList=this.questinTypeService.selectQuestionTypeTree();
+		
+		model.addAttribute("arrType", treeList);
+		
+		return "questiontype/list";
+	}
+	
+}

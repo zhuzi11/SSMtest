@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+                http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd
+                http://www.springframework.org/schema/mvc
+                http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<!-- 配置SpringMVC的东西(Spring) -->
+
+	<!--1、 配置控制器 -->
+	<context:component-scan base-package="com.wisezone.controller.admin"></context:component-scan>
+
+	<!--2、 使用HandlerMapping注解驱动 -->
+	<mvc:annotation-driven />
+
+	<!-- 3、允许跨域访问json数据 -->
+	<mvc:cors>
+		<mvc:mapping path="/admin/**" />
+	</mvc:cors>
+
+	<!-- xxxx、HandlerMapping Handler映射，刚刚这里没有配制 -->
+	<bean
+		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"></bean>
+
+
+
+
+	<!--避免IE执行AJAX时，返回JSON出现下载文件 -->
+	<mvc:annotation-driven>
+		<!-- 处理responseBody 里面日期类型 -->
+		<mvc:message-converters>
+		
+		    <!-- 文件 下载的损坏解决方法 -->
+		    <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+		
+		
+		   <!-- 字符串的处理 -->
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html; charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+
+            <!-- xml处理 -->
+			<bean
+				class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"></bean>
+
+
+			<!-- json格式转换 -->
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+						<property name="dateFormat">
+							<bean class="java.text.SimpleDateFormat">
+								<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
+							</bean>
+						</property>
+					</bean>
+				</property>
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html; charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+			
+		</mvc:message-converters>
+	</mvc:annotation-driven> 
+
+
+
+
+	<!-- 4、配置文件上传，如果没有使用文件上传可以不用配置，当然如果不配，那么配置文件中也不必引入上传组件包 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 默认编码 -->
+		<property name="defaultEncoding" value="utf-8" />
+		<!-- 文件大小最大值 -->
+		<property name="maxUploadSize" value="85760000" />
+		<!-- 内存中的最大值 -->
+		<property name="maxInMemorySize" value="40960" />
+	</bean>
+
+
+	<!-- 5、配置jsp视图解析器 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<!-- 文件存放前缀 -->
+		<property name="prefix" value="/WEB-INF/admin/" />
+
+		<!-- 文件结尾的后缀名 -->
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+</beans>
+        
+ 
